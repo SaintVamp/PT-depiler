@@ -8,6 +8,10 @@ import { omit } from "es-toolkit";
  * 注意，我们不直接使用用户提供的 secretKey 作为 AES 的密钥，因为可能无法提供足够强度的密钥
  */
 export function encryptData(data: any, encryptionKey?: string): string {
+  console.info("我的debug内容")
+  console.info(data)
+  console.info(encryptionKey)
+  console.info("我的debug内容")
   const stringifyData = JSON.stringify(data);
   if (!encryptionKey) {
     return stringifyData;
@@ -37,10 +41,6 @@ export async function backupDataToJSZipBlob(data: IBackupData, encryptionKey?: s
 
   delete data.manifest; // 确保 manifest 不会被重复添加到 zip 中
   for (const [key, value] of Object.entries(data)) {
-    console.info("我的debug内容")
-    console.info(value)
-    console.info(encryptionKey)
-    console.info("我的debug内容")
     const fileName = `${key}.json`;
     const fileContent = encryptData(value, encryptionKey);
     zip.file(fileName, fileContent);

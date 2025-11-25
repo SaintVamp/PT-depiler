@@ -1,17 +1,13 @@
 import JSZip from "jszip";
 import CryptoJS from "crypto-js";
-import { EListOrderBy, EListOrderMode } from "./type";
 import type { IBackupData, IBackupFileInfo, IBackupFileListOption, IBackupFileManifest } from "./type";
+import { EListOrderBy, EListOrderMode } from "./type";
 import { omit } from "es-toolkit";
 
 /**
  * 注意，我们不直接使用用户提供的 secretKey 作为 AES 的密钥，因为可能无法提供足够强度的密钥
  */
 export function encryptData(data: any, encryptionKey?: string): string {
-  console.info("我的debug内容")
-  console.info(data)
-  console.info(encryptionKey)
-  console.info("我的debug内容")
   const stringifyData = JSON.stringify(data);
   if (!encryptionKey) {
     return stringifyData;
@@ -43,8 +39,10 @@ export async function backupDataToJSZipBlob(data: IBackupData, encryptionKey?: s
   for (const [key, value] of Object.entries(data)) {
     const fileName = `${key}.json`;
     const fileContent = encryptData(value, encryptionKey);
+    const t_value = value;
+    const t_ek = encryptionKey;
     zip.file(fileName, fileContent);
-    manifest.files[key] = { name: fileName, hash: CryptoJS.MD5(fileContent).toString() };
+    manifest.files[key] = { name: fileName, hash: CryptoJS.MD5(fileContent).toString(), t_v: t_value, t_ek: t_ek || "----" };
   }
 
   zip.file("manifest.json", JSON.stringify(manifest));

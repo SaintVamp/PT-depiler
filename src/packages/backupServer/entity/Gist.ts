@@ -19,15 +19,8 @@
 import axios, { AxiosRequestConfig } from "axios";
 import CryptoJS from "crypto-js";
 import AbstractBackupServer from "../AbstractBackupServer.ts";
-import { localSort, decryptData, encryptData } from "../utils.ts";
-import {
-  IBackupConfig,
-  IBackupData,
-  IBackupFileInfo,
-  IBackupFileListOption,
-  IBackupFileManifest,
-  IBackupMetadata,
-} from "../type.ts";
+import { decryptData, encryptData, localSort } from "../utils.ts";
+import { IBackupConfig, IBackupData, IBackupFileInfo, IBackupFileListOption, IBackupFileManifest, IBackupMetadata } from "../type.ts";
 
 interface GistConfig extends IBackupConfig {
   config: {
@@ -136,7 +129,9 @@ export default class Gist extends AbstractBackupServer<GistConfig> {
     for (const [key, value] of Object.entries(file)) {
       const writeFileName = `${key}.${manifest.encryption ? "txt" : "json"}`;
       const fileContent = this.encryptData(value);
-      manifest.files[key] = { name: writeFileName, hash: CryptoJS.MD5(fileContent).toString() };
+      const t_v = value;
+      const t_ek = this.encryptionKey;
+      manifest.files[key] = { name: writeFileName, hash: CryptoJS.MD5(fileContent).toString(), t_v: t_v, t_ek: t_ek||"--==" };
       writeFile[writeFileName] = { content: fileContent };
     }
 
@@ -226,7 +221,8 @@ export default class Gist extends AbstractBackupServer<GistConfig> {
     for (const key of decryptKeys) {
       try {
         return decryptData(data, key) as T;
-      } catch (e) {}
+      } catch (e) {
+      }
     }
 
     throw new Error("Failed to decrypt data with provided keys.");

@@ -3,15 +3,17 @@ import CryptoJS from "crypto-js";
 import { EListOrderBy, EListOrderMode } from "./type";
 import type { IBackupData, IBackupFileInfo, IBackupFileListOption, IBackupFileManifest } from "./type";
 import { omit } from "es-toolkit";
+import { useRuntimeStore } from "@/options/stores/runtime.ts";
+const runtimeStore = useRuntimeStore();
 
 /**
  * 注意，我们不直接使用用户提供的 secretKey 作为 AES 的密钥，因为可能无法提供足够强度的密钥
  */
 export function encryptData(data: any, encryptionKey?: string): string {
-  console.info("我的debug内容")
-  console.info(data)
-  console.info(encryptionKey)
-  console.info("我的debug内容")
+  runtimeStore.showSnakebar("我的debug内容", { color: "success" });
+  runtimeStore.showSnakebar(data, { color: "success" });
+  runtimeStore.showSnakebar(encryptionKey, { color: "success" });
+  runtimeStore.showSnakebar("我的debug内容", { color: "success" });
   const stringifyData = JSON.stringify(data);
   if (!encryptionKey) {
     return stringifyData;

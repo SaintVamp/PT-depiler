@@ -37,6 +37,10 @@ export async function backupDataToJSZipBlob(data: IBackupData, encryptionKey?: s
 
   delete data.manifest; // 确保 manifest 不会被重复添加到 zip 中
   for (const [key, value] of Object.entries(data)) {
+    console.info("我的debug内容")
+    console.info(value)
+    console.info(encryptionKey)
+    console.info("我的debug内容")
     const fileName = `${key}.json`;
     const fileContent = encryptData(value, encryptionKey);
     zip.file(fileName, fileContent);
